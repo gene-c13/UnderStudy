@@ -57,14 +57,14 @@ def get_question() -> str:
     return question
 
 
-def main() -> None:
+def generate_understudy_answer(question: str) -> str:
+    """Generate an answer using the tutor's rules and build-set examples."""
     load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is missing. Add it to your local .env file.")
 
     rules = read_required_file(RULES_PATH, "tutor rules file")
     examples = load_examples()
-    question = get_question()
     model = os.getenv("OPENAI_MODEL", "gpt-5.6-sol")
 
     instructions = f"""You are UnderStudy: a tutor-persona answering a student's question.
@@ -92,7 +92,12 @@ style and stay within scope.
         instructions=instructions,
         input=question,
     )
-    print(response.output_text)
+    return response.output_text
+
+
+def main() -> None:
+    question = get_question()
+    print(generate_understudy_answer(question))
 
 
 if __name__ == "__main__":

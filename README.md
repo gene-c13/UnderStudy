@@ -19,5 +19,33 @@ answers in that tutor's method when the tutor is unavailable.
 
    Or run `python answer.py` and type the question when prompted.
 
+## Plain-GPT baseline
+
+Use the baseline for a fair comparison: it uses the same model as UnderStudy
+but has no Hong Ting rules or teaching examples.
+
+```bash
+python baseline.py "What is the difference between ionic and covalent bonding?"
+```
+
+Or run `python baseline.py` and type the question when prompted.
+
+## Evaluation scaffold
+
+When Hong Ting releases a set of Markdown question files for evaluation, run:
+
+```bash
+python run_eval.py path/to/question_folder
+```
+
+Each `.md` file must contain one question; its filename becomes the
+`question_id`. The command runs UnderStudy and the plain-GPT baseline for each
+file, then writes `results/eval_output.csv`.
+
+The score and reviewer columns are intentionally blank. Hong Ting should score
+the answer pairs manually; before a blind review, copy the two answer columns
+into a separate sheet and remove or randomize their labels. This script does
+not evaluate the answers automatically.
+
 The `data/` folder is deliberately ignored by Git because it contains the
 tutor's private teaching material. The `templates/` folder is safe to commit.
