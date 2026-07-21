@@ -1,6 +1,4 @@
 .env
 .venv/
-# Audio recordings are shared separately because they are large binary files.
-data/recordings/
 __pycache__/
 *.key

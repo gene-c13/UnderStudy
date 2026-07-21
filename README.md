@@ -54,11 +54,10 @@ the answer pairs manually; before a blind review, copy the two answer columns
 into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
-The text files under `data/` are shared through Git so both teammates work
-from the same transcripts, drafts, rules, examples, and evaluation materials.
-Only `data/recordings/` is ignored because audio files are large; share those
-through your agreed shared drive instead. The `templates/` folder is also
-committed to Git.
+Everything under `data/` is shared through Git so both teammates work from the
+same recordings, transcripts, drafts, rules, examples, and evaluation
+materials. The `templates/` folder is also committed to Git. Only `.env` and
+other secret or machine-specific files stay out of the repository.
 
 ## Lesson-recording intake
 
@@ -78,10 +77,8 @@ data/
   build_examples/                   # final tutor-approved Q&A examples
 ```
 
-Keep test recordings in your shared-drive recordings folder. If you later need
-them locally, place copies in `data/recordings/incoming/`; Git will ignore
-them. The text transcripts, drafts, rules, and examples remain shareable in
-the repository.
+Put test recordings in `data/recordings/incoming/`. They are versioned and
+shared through Git with the rest of the project.
 To create a tutor-reviewable rules draft from the available transcripts, run:
 
 ```bash
