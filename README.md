@@ -48,4 +48,5 @@ into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
 The `data/` folder is deliberately ignored by Git because it contains the
-tutor's private teaching material. The `templates/` folder is safe to commit.
+tutor's private teaching material, including the generated internal profile.
+The `templates/` folder is safe to commit.
