@@ -60,10 +60,33 @@ The `templates/` folder is safe to commit.
 
 ## Lesson-recording intake
 
-Keep only consented tutor lesson recordings in `data/recordings/`. Store the
-first, unedited transcription in `data/transcripts/raw/`, then save the
-tutor-reviewed version in `data/transcripts/reviewed/`. Use the reviewed
-transcript to update `data/rules.md` and the build examples, then run:
+The private `data/` folder separates automated drafts from the tutor-approved
+materials used by students:
+
+```text
+data/
+  recordings/incoming/              # newly uploaded, consented teacher audio
+  recordings/processed/             # audio successfully transcribed
+  transcripts/raw/                  # unedited transcription output
+  transcripts/reviewed/             # Hong Ting-approved transcripts
+  rule_drafts/                      # AI-generated draft rules; never used directly
+  extracted_examples/drafts/        # AI-suggested teaching examples
+  extracted_examples/approved/      # tutor-approved candidates
+  rules.md                          # final tutor-approved teaching rules
+  build_examples/                   # final tutor-approved Q&A examples
+  internal/compiled_profile.md      # generated profile used by answer.py
+```
+
+Keep only consented tutor lesson recordings in `data/recordings/incoming/`.
+The future ingestion step will create a raw transcript and draft rules or
+examples. Hong Ting reviews these drafts and promotes only the accurate parts
+into `data/rules.md` and `data/build_examples/`.
+
+Use [recording_manifest_template.csv](templates/recording_manifest_template.csv)
+as the starting point for a private recording log. Keep the completed manifest
+inside `data/`, not in `templates/`.
+
+After changing the approved rules or build examples, run:
 
 ```bash
 python compile_rules.py
