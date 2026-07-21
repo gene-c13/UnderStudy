@@ -6,12 +6,19 @@ answers in that tutor's method when the tutor is unavailable.
 ## First answering-engine test
 
 1. Follow [SETUP.md](SETUP.md) to configure Python and `OPENAI_API_KEY`.
-2. Copy `templates/tutor_rules_template.md` to `data/rules.md`, then have Hong
-   Ting complete it.
+2. Copy `templates/Suggested Rules Template.md` to `data/rules.md`, then have
+   the tutor complete the crash course in their own words.
 3. Copy `templates/build_example_template.md` to `data/build_examples/01.md`
    through `04.md`, then replace the template content with 3–4 real,
    tutor-written Q&As.
-4. Run an answer:
+4. Compile the tutor materials into a private internal profile:
+
+   ```bash
+   python compile_rules.py
+   ```
+
+   Run this again whenever `data/rules.md` or a build example changes.
+5. Run an answer:
 
    ```bash
    python answer.py "What is the difference between ionic and covalent bonding?"
@@ -22,7 +29,7 @@ answers in that tutor's method when the tutor is unavailable.
 ## Plain-GPT baseline
 
 Use the baseline for a fair comparison: it uses the same model as UnderStudy
-but has no Hong Ting rules or teaching examples.
+but has no tutor rules or teaching examples.
 
 ```bash
 python baseline.py "What is the difference between ionic and covalent bonding?"
@@ -32,7 +39,7 @@ Or run `python baseline.py` and type the question when prompted.
 
 ## Evaluation scaffold
 
-When Hong Ting releases a set of Markdown question files for evaluation, run:
+When the tutor releases a set of Markdown question files for evaluation, run:
 
 ```bash
 python run_eval.py path/to/question_folder
@@ -42,10 +49,11 @@ Each `.md` file must contain one question; its filename becomes the
 `question_id`. The command runs UnderStudy and the plain-GPT baseline for each
 file, then writes `results/eval_output.csv`.
 
-The score and reviewer columns are intentionally blank. Hong Ting should score
+The score and reviewer columns are intentionally blank. The tutor should score
 the answer pairs manually; before a blind review, copy the two answer columns
 into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
 The `data/` folder is deliberately ignored by Git because it contains the
-tutor's private teaching material. The `templates/` folder is safe to commit.
+tutor's private teaching material, including the generated internal profile.
+The `templates/` folder is safe to commit.

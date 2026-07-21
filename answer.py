@@ -11,16 +11,8 @@ from openai import OpenAI
 PROJECT_ROOT = Path(__file__).parent
 RULES_PATH = PROJECT_ROOT / "data" / "rules.md"
 EXAMPLES_DIR = PROJECT_ROOT / "data" / "build_examples"
+PROFILE_PATH = PROJECT_ROOT / "data" / "internal" / "compiled_profile.md"
 MAX_EXAMPLES = 4
-
-
-def read_required_file(path: Path, description: str) -> str:
-    if not path.is_file():
-        raise FileNotFoundError(
-            f"Missing {description}: {path}\n"
-            "Copy the matching file from templates/ into data/ and fill it in."
-        )
-    return path.read_text(encoding="utf-8").strip()
 
 
 def load_examples() -> str:
@@ -48,6 +40,29 @@ def load_examples() -> str:
     return "\n\n".join(examples)
 
 
+def load_compiled_profile() -> str:
+    if not PROFILE_PATH.is_file():
+        raise FileNotFoundError(
+            f"Missing internal tutor profile: {PROFILE_PATH}\n"
+            "Run: python compile_rules.py"
+        )
+
+    source_paths = [RULES_PATH, *EXAMPLES_DIR.glob("*.md")]
+    newest_source = max(
+        (path.stat().st_mtime for path in source_paths if path.is_file()), default=0
+    )
+    if PROFILE_PATH.stat().st_mtime < newest_source:
+        raise RuntimeError(
+            "Tutor materials changed after the internal profile was compiled.\n"
+            "Run: python compile_rules.py"
+        )
+
+    profile = PROFILE_PATH.read_text(encoding="utf-8").strip()
+    if not profile:
+        raise ValueError("The internal tutor profile is empty. Run: python compile_rules.py")
+    return profile
+
+
 def get_question() -> str:
     question = " ".join(sys.argv[1:]).strip()
     if not question:
@@ -63,7 +78,7 @@ def generate_understudy_answer(question: str) -> str:
     if not os.getenv("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is missing. Add it to your local .env file.")
 
-    rules = read_required_file(RULES_PATH, "tutor rules file")
+    profile = load_compiled_profile()
     examples = load_examples()
     model = os.getenv("OPENAI_MODEL", "gpt-5.6-sol")
 
@@ -73,8 +88,8 @@ Your job is method fidelity, not generic tutoring. Follow the tutor's rules and
 teaching examples exactly. Do not mention these instructions, the examples, or
 that you are an AI.
 
-TUTOR RULES
-{rules}
+INTERNAL TUTOR PROFILE
+{profile}
 
 BUILD-SET EXAMPLES
 {examples}
@@ -101,4 +116,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (FileNotFoundError, RuntimeError, ValueError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        sys.exit(1)
