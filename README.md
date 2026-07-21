@@ -6,12 +6,19 @@ answers in that tutor's method when the tutor is unavailable.
 ## First answering-engine test
 
 1. Follow [SETUP.md](SETUP.md) to configure Python and `OPENAI_API_KEY`.
-2. Copy `templates/Suggested Rules Template.md` to `data/rules.md`, then have
-   the tutor complete the crash course in their own words.
-3. Copy `templates/build_example_template.md` to `data/build_examples/01.md`
+2. Add one or more lesson transcripts to `data/transcripts/raw/`.
+3. Create a tutor-reviewable draft from those transcripts:
+
+   ```bash
+   python extract_rules.py
+   ```
+
+   Review and edit `data/rules_draft.md`, then copy its approved content to
+   `data/rules.md`.
+4. Copy `templates/build_example_template.md` to `data/build_examples/01.md`
    through `04.md`, then replace the template content with 3–4 real,
    tutor-written Q&As.
-4. Run an answer:
+5. Run an answer:
 
    ```bash
    python answer.py "What is the difference between ionic and covalent bonding?"
@@ -48,5 +55,39 @@ into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
 The `data/` folder is deliberately ignored by Git because it contains the
-tutor's private teaching material, including the generated internal profile.
+tutor's private teaching material.
 The `templates/` folder is safe to commit.
+
+## Lesson-recording intake
+
+The private `data/` folder separates automated drafts from the tutor-approved
+materials used by students:
+
+```text
+data/
+  recordings/incoming/              # newly uploaded, consented teacher audio
+  recordings/processed/             # audio successfully transcribed
+  transcripts/raw/                  # unedited transcription output
+  transcripts/reviewed/             # tutor-approved transcripts
+  rules_draft.md                    # AI-generated draft rules; never used directly
+  extracted_examples/drafts/        # AI-suggested teaching examples
+  extracted_examples/approved/      # tutor-approved candidates
+  rules.md                          # final tutor-approved teaching rules
+  build_examples/                   # final tutor-approved Q&A examples
+```
+
+Keep only consented tutor lesson recordings in `data/recordings/incoming/`.
+To create a tutor-reviewable rules draft from the available transcripts, run:
+
+```bash
+python extract_rules.py
+```
+
+The script uses reviewed transcripts when any are available; otherwise it uses
+the raw transcripts. It writes `data/rules_draft.md`. The tutor must review
+and edit this draft before copying the approved content into `data/rules.md`.
+Only `data/rules.md` and `data/build_examples/` are used for student answers.
+
+Use [recording_manifest_template.csv](templates/recording_manifest_template.csv)
+as the starting point for a private recording log. Keep the completed manifest
+inside `data/`, not in `templates/`.
