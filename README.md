@@ -54,13 +54,15 @@ the answer pairs manually; before a blind review, copy the two answer columns
 into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
-The `data/` folder is deliberately ignored by Git because it contains the
-tutor's private teaching material.
-The `templates/` folder is safe to commit.
+The text files under `data/` are shared through Git so both teammates work
+from the same transcripts, drafts, rules, examples, and evaluation materials.
+Only `data/recordings/` is ignored because audio files are large; share those
+through your agreed shared drive instead. The `templates/` folder is also
+committed to Git.
 
 ## Lesson-recording intake
 
-The private `data/` folder separates automated drafts from the tutor-approved
+The shared `data/` folder separates automated drafts from the tutor-approved
 materials used by students:
 
 ```text
@@ -76,7 +78,10 @@ data/
   build_examples/                   # final tutor-approved Q&A examples
 ```
 
-Keep only consented tutor lesson recordings in `data/recordings/incoming/`.
+Keep test recordings in your shared-drive recordings folder. If you later need
+them locally, place copies in `data/recordings/incoming/`; Git will ignore
+them. The text transcripts, drafts, rules, and examples remain shareable in
+the repository.
 To create a tutor-reviewable rules draft from the available transcripts, run:
 
 ```bash
