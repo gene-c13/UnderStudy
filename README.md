@@ -11,14 +11,7 @@ answers in that tutor's method when the tutor is unavailable.
 3. Copy `templates/build_example_template.md` to `data/build_examples/01.md`
    through `04.md`, then replace the template content with 3–4 real,
    tutor-written Q&As.
-4. Compile the tutor materials into a private internal profile:
-
-   ```bash
-   python compile_rules.py
-   ```
-
-   Run this again whenever `data/rules.md` or a build example changes.
-5. Run an answer:
+4. Run an answer:
 
    ```bash
    python answer.py "What is the difference between ionic and covalent bonding?"
@@ -55,5 +48,4 @@ into a separate sheet and remove or randomize their labels. This script does
 not evaluate the answers automatically.
 
 The `data/` folder is deliberately ignored by Git because it contains the
-tutor's private teaching material, including the generated internal profile.
-The `templates/` folder is safe to commit.
+tutor's private teaching material. The `templates/` folder is safe to commit.

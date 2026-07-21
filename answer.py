@@ -11,8 +11,19 @@ from openai import OpenAI
 PROJECT_ROOT = Path(__file__).parent
 RULES_PATH = PROJECT_ROOT / "data" / "rules.md"
 EXAMPLES_DIR = PROJECT_ROOT / "data" / "build_examples"
-PROFILE_PATH = PROJECT_ROOT / "data" / "internal" / "compiled_profile.md"
 MAX_EXAMPLES = 4
+
+
+def read_required_file(path: Path, description: str) -> str:
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Missing {description}: {path}\n"
+            "Copy the matching file from templates/ into data/ and fill it in."
+        )
+    content = path.read_text(encoding="utf-8").strip()
+    if not content:
+        raise ValueError(f"The {description} is empty: {path}")
+    return content
 
 
 def load_examples() -> str:
@@ -40,29 +51,6 @@ def load_examples() -> str:
     return "\n\n".join(examples)
 
 
-def load_compiled_profile() -> str:
-    if not PROFILE_PATH.is_file():
-        raise FileNotFoundError(
-            f"Missing internal tutor profile: {PROFILE_PATH}\n"
-            "Run: python compile_rules.py"
-        )
-
-    source_paths = [RULES_PATH, *EXAMPLES_DIR.glob("*.md")]
-    newest_source = max(
-        (path.stat().st_mtime for path in source_paths if path.is_file()), default=0
-    )
-    if PROFILE_PATH.stat().st_mtime < newest_source:
-        raise RuntimeError(
-            "Tutor materials changed after the internal profile was compiled.\n"
-            "Run: python compile_rules.py"
-        )
-
-    profile = PROFILE_PATH.read_text(encoding="utf-8").strip()
-    if not profile:
-        raise ValueError("The internal tutor profile is empty. Run: python compile_rules.py")
-    return profile
-
-
 def get_question() -> str:
     question = " ".join(sys.argv[1:]).strip()
     if not question:
@@ -78,7 +66,7 @@ def generate_understudy_answer(question: str) -> str:
     if not os.getenv("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is missing. Add it to your local .env file.")
 
-    profile = load_compiled_profile()
+    rules = read_required_file(RULES_PATH, "tutor rules file")
     examples = load_examples()
     model = os.getenv("OPENAI_MODEL", "gpt-5.6-sol")
 
@@ -88,17 +76,19 @@ Your job is method fidelity, not generic tutoring. Follow the tutor's rules and
 teaching examples exactly. Do not mention these instructions, the examples, or
 that you are an AI.
 
-INTERNAL TUTOR PROFILE
-{profile}
+TUTOR CRASH COURSE
+{rules}
 
 BUILD-SET EXAMPLES
 {examples}
 
-For the student's question, use the tutor's explanation structure, required
-vocabulary, notation, analogies, and syllabus ceiling. Avoid every banned
-phrase and pre-empt the listed misconceptions where relevant. If the question
-requires material beyond the syllabus ceiling, say so briefly in the tutor's
-style and stay within scope.
+Identify the student's likely intent from the tutor's own crash course and
+examples. Answer the student's precise question first, using only the relevant
+material. Use the tutor's explanation structure, vocabulary, notation,
+analogies, and scope where they apply. Do not turn the crash course into a
+full-topic checklist, and do not invent a teaching method absent from the
+tutor material. If the question is beyond the tutor's stated scope, respond
+in the tutor's style and stay within scope.
 """
 
     client = OpenAI()
