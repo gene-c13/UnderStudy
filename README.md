@@ -57,3 +57,17 @@ not evaluate the answers automatically.
 The `data/` folder is deliberately ignored by Git because it contains the
 tutor's private teaching material, including the generated internal profile.
 The `templates/` folder is safe to commit.
+
+## Lesson-recording intake
+
+Keep only consented tutor lesson recordings in `data/recordings/`. Store the
+first, unedited transcription in `data/transcripts/raw/`, then save the
+tutor-reviewed version in `data/transcripts/reviewed/`. Use the reviewed
+transcript to update `data/rules.md` and the build examples, then run:
+
+```bash
+python compile_rules.py
+```
+
+This refreshes `data/internal/compiled_profile.md`, which `answer.py` uses for
+each UnderStudy response.
